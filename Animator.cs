@@ -10,7 +10,19 @@ namespace AnimatedControls
     public class Animator
     {
         private static Animator m_Instance;
-        public static Animator Instance { get { if(m_Instance == null) { m_Instance = new Animator(); } return m_Instance; } }
+        public static Animator Instance 
+        { 
+            get 
+            { 
+                if(m_Instance == null) 
+                { 
+                    m_Instance = new Animator(); 
+                } 
+                
+                return m_Instance; 
+            } 
+        }
+        
         private class AnimatorNode
         {
             public AnimatedControl Control;
@@ -87,7 +99,7 @@ namespace AnimatedControls
                 }
                 catch (ArgumentNullException)
                 {
-                    System.Diagnostics.Debug.WriteLine("Animator.Draw ArgumentNullException");
+                    System.Diagnostics.Debug.WriteLine("Animator.Remove ArgumentNullException");
                 }
         }
 
@@ -101,7 +113,7 @@ namespace AnimatedControls
             }
             catch (ArgumentNullException)
             {
-                System.Diagnostics.Debug.WriteLine("Animator.Draw ArgumentNullException");
+                System.Diagnostics.Debug.WriteLine("Animator.GetInterval ArgumentNullException");
             }
             return interval;
         }
@@ -115,7 +127,7 @@ namespace AnimatedControls
             }
             catch (ArgumentNullException)
             {
-                System.Diagnostics.Debug.WriteLine("Animator.Draw ArgumentNullException");
+                System.Diagnostics.Debug.WriteLine("Animator.SetInterval ArgumentNullException");
             }
         }
 
