@@ -10,13 +10,14 @@ using System.Windows.Forms;
 
 namespace AnimatedControls
 {
+    public delegate void AnimatedControlUpdateDelegate();
     public enum AnimationStyles { None, Linear, Accelerate, Decelerate, Spring, Bounce };
     public partial class AnimatedControl : Control
     {
         public int RefreshRate
         {
-            get { return m_Timer.Interval; }
-            set { m_Timer.Interval = value; }
+            get { return Animator.Instance.GetInterval(this); }
+            set { Animator.Instance.SetInterval(this, value); }
         }
 
         protected int m_RefreshSpeed = 10; //Number of timer ticks granted to animate the control
@@ -28,6 +29,8 @@ namespace AnimatedControls
         public AnimatedControl()
         {
             InitializeComponent();
+
+            Animator.Instance.Add(this, 50);
         }
 
         protected double GetAnimationPoint()
@@ -52,16 +55,23 @@ namespace AnimatedControls
         protected virtual void OnRefreshed(EventArgs e)
         {
             m_RefreshProgress = 0;
-            m_Timer.Enabled = true;
+            Animator.Instance.Draw(this);
         }
 
-        private void m_Timer_Tick(object sender, EventArgs e)
+        private void draw_frame()
         {
-            if (++m_RefreshProgress >= m_RefreshSpeed)
-                m_Timer.Enabled = false;
             this.Invalidate();
+            this.Update();
         }
 
+        public void DrawFrame()
+        {
+            m_RefreshProgress++;
+            if(IsHandleCreated && InvokeRequired)
+            {
+                this.Invoke(new AnimatedControlUpdateDelegate(draw_frame));
+            }
+        }
         private double GetLinearPoint(double d)
         {
             return d;
@@ -91,6 +101,14 @@ namespace AnimatedControls
                 return 0;
             else
                 return -(Math.Abs(Math.Sin(20 * Math.PI * d)) / (20 * Math.PI * d)) + 1;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if(disposing)
+            {
+                Animator.Instance.Remove(this);
+            }
         }
     }
 }
