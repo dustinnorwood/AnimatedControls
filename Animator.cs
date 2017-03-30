@@ -44,8 +44,6 @@ namespace AnimatedControls
         private int m_RefreshPeriod = 5;
         public int RefreshPeriod { get { return m_RefreshPeriod; } set { m_RefreshPeriod = value; } }
 
-        private object m_Lock = new object();
-
         public Animator()
         {
             m_Timer = new System.Threading.Timer(m_Timer_Tick, null, System.Threading.Timeout.Infinite, m_RefreshPeriod);
@@ -55,8 +53,6 @@ namespace AnimatedControls
 
         private void m_Timer_Tick(object state)
         {
-            lock (m_Lock)
-            {
                 bool isControlAnimating = false;
 
                 foreach (AnimatorNode n in m_Controls)
@@ -78,7 +74,6 @@ namespace AnimatedControls
 
                 if (!isControlAnimating)
                     RunTimer(false);
-            }
         }
 
         public void Add(AnimatedControl control, int milliseconds)
